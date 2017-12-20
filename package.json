@@ -14,7 +14,11 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "bulma": "^0.6.1",
+    "node-sass": "^4.7.2",
+    "sass-loader": "^6.0.6",
     "vue": "^2.5.2",
+    "vue-clipboard2": "^0.0.8",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {
