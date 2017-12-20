@@ -104,22 +104,27 @@ export default {
   },
   computed: {
     createDatabase () {
+      /* #TODO. refacto || in computed */
       return `CREATE DATABASE \`${this.database_name || '[DATA_BASE]'}\` COLLATE = '${this.collate || '[COLLATE]'}';`
     },
     createUser () {
+      /* #TODO. refacto || in computed */
       return `CREATE USER \`${this.user || '[USER]'}\`@'localhost' IDENTIFIED BY '${this.password || '[PASSWORD]'}';`
     },
     grantUser () {
+      /* #TODO. refacto || in computed */
       return `GRANT ALL PRIVILEGES ON \`${this.database_name || '[DATA_BASE]'}\`.* TO \`${this.user || '[USER]'}\`@'localhost';`
     },
     flushPrivileges () {
-      return `FLUSH PRIVILEGES;`
+      return 'FLUSH PRIVILEGES;'
     },
     importDatabase () {
-      return `mysql -h localhost -u${this.user || '[USER]'} -p${this.password || '[PASSWORD]'} ${this.database_name || '[DATA_BASE]'} < ${this.sql_file || '[SQL_FILE]'}`
+      /* #TODO. refacto || in computed */
+      return `mysql -h localhost -u${this.user || '[USER]'} -p'${this.password || '[PASSWORD]'}' ${this.database_name || '[DATA_BASE]'} < ${this.sql_file || '[SQL_FILE]'}`
     },
     exportDatabase () {
-      return `mysqldump -h localhost -u${this.user || '[USER]'} -p${this.password || '[PASSWORD]'} -r${this.sql_file || '[SQL_FILE]'} ${this.database_name || '[DATA_BASE]'}`
+      /* #TODO. refacto || in computed */
+      return `mysqldump -h localhost -u${this.user || '[USER]'} -p'${this.password || '[PASSWORD]'}' -r${this.sql_file || '[SQL_FILE]'} ${this.database_name || '[DATA_BASE]'}`
     }
   }
 }
