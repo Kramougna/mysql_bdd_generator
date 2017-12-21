@@ -3,11 +3,12 @@
     <div class='columns'>
       <div class='column'>
         <div class='box'>
-          <input v-model='database_name' placeholder='[DATA_BASE]'>
+          <input v-model='databaseName' placeholder='[DATA_BASE]'>
           <input v-model='collate' placeholder='[COLLATE]'>
           <input v-model='user' placeholder='[USER]'>
+          <input v-model='host' placeholder='[HOST]'>
           <input v-model='password' placeholder='[PASSWORD]'>
-          <input v-model='sql_file' placeholder='[SQL_FILE]'>
+          <input v-model='sqlFile' placeholder='[SQL_FILE]'>
         </div>
       </div>
     </div>
@@ -96,35 +97,54 @@ export default {
   data () {
     return {
       collate: 'utf8_general_ci',
-      database_name: '',
+      databaseName: '',
+      host: 'localhost',
       password: '',
-      sql_file: '',
+      sqlFile: '',
       user: ''
     }
   },
   computed: {
     createDatabase () {
       /* #TODO. refacto || in computed */
-      return `CREATE DATABASE \`${this.database_name || '[DATA_BASE]'}\` COLLATE = '${this.collate || '[COLLATE]'}';`
+      return `CREATE DATABASE \`${this.dataBaseValue}\` COLLATE = '${this.collateValue}';`
     },
     createUser () {
       /* #TODO. refacto || in computed */
-      return `CREATE USER \`${this.user || '[USER]'}\`@'localhost' IDENTIFIED BY '${this.password || '[PASSWORD]'}';`
+      return `CREATE USER \`${this.userValue}' IDENTIFIED BY '${this.passwordValue}';`
     },
     grantUser () {
       /* #TODO. refacto || in computed */
-      return `GRANT ALL PRIVILEGES ON \`${this.database_name || '[DATA_BASE]'}\`.* TO \`${this.user || '[USER]'}\`@'localhost';`
+      return `GRANT ALL PRIVILEGES ON \`${this.dataBaseValue}\`.* TO \`${this.userValue}\`@'${this.hostValue}';`
     },
     flushPrivileges () {
       return 'FLUSH PRIVILEGES;'
     },
     importDatabase () {
       /* #TODO. refacto || in computed */
-      return `mysql -h localhost -u${this.user || '[USER]'} -p'${this.password || '[PASSWORD]'}' ${this.database_name || '[DATA_BASE]'} < ${this.sql_file || '[SQL_FILE]'}`
+      return `mysql -h ${this.hostValue} -u${this.userValue} -p'${this.passwordValue}' ${this.dataBaseValue} < ${this.sqlFileValue}`
     },
     exportDatabase () {
       /* #TODO. refacto || in computed */
-      return `mysqldump -h localhost -u${this.user || '[USER]'} -p'${this.password || '[PASSWORD]'}' -r${this.sql_file || '[SQL_FILE]'} ${this.database_name || '[DATA_BASE]'}`
+      return `mysqldump -h ${this.hostValue} -u${this.userValue} -p'${this.passwordValue}' -r${this.sqlFileValue} ${this.dataBaseValue}`
+    },
+    dataBaseValue () {
+      return this.databaseName || '[DATA_BASE]'
+    },
+    userValue () {
+      return this.user || '[USER]'
+    },
+    passwordValue () {
+      return this.password || '[PASSWORD]'
+    },
+    hostValue () {
+      return this.host || '[HOST]'
+    },
+    collateValue () {
+      return this.host || '[COLLATE]'
+    },
+    sqlFileValue () {
+      return this.sqlFile || '[SQL_FILE]'
     }
   }
 }
