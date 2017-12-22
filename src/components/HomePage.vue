@@ -16,75 +16,13 @@
     <div class='columns'>
       <div class='column'>
         <div class='box'>
-          <div class='columns'>
-            <div class='column'>
-              <strong>CREATE DATABASE :</strong>
-              <p>{{createDatabase}}</p>
-            </div>
-
-            <div class='column is-2'>
-              <button type='button' v-clipboard:copy='createDatabase'>Copy create db</button>
-            </div>
-          </div>
-
-          <div class='columns'>
-            <div class='column'>
-              <strong>CREATE USER :</strong>
-              <p>{{createUser}}</p>
-            </div>
-
-            <div class='column is-2'>
-              <button type='button' v-clipboard:copy='createUser'>Copy create user</button>
-            </div>
-          </div>
-
-          <div class='columns'>
-            <div class='column'>
-              <strong>GRANT ALL PRIVILEGES :</strong>
-              <p>{{grantUser}}</p>
-            </div>
-
-            <div class='column is-2'>
-              <button type='button' v-clipboard:copy='grantUser'>Copy grant user</button>
-            </div>
-          </div>
-
-          <div class='columns'>
-            <div class='column'>
-              <strong>FLUSH PRIVILEGES :</strong>
-              <p>{{flushPrivileges}}</p>
-            </div>
-
-            <div class='column is-2'>
-              <button type='button' v-clipboard:copy='flushPrivileges'>Copy flush</button>
-            </div>
-          </div>
+          <data-base-command :data-base-config='dataBaseConfig'></data-base-command>
         </div>
       </div>
 
       <div class='column'>
         <div class='box'>
-          <div class='columns'>
-            <div class='column'>
-              <strong>Import BDD</strong>
-              <p>{{importDatabase}}</p>
-            </div>
-
-            <div class='column is-2'>
-              <button type='button' v-clipboard:copy='importDatabase'>Copy Import</button>
-            </div>
-          </div>
-
-          <div class='columns'>
-            <div class='column'>
-              <strong>Export BDD</strong>
-              <p>{{exportDatabase}}</p>
-            </div>
-
-            <div class='column is-2'>
-              <button type='button' v-clipboard:copy='exportDatabase'>Copy Export</button>
-            </div>
-          </div>
+          <data-base-transfer :transfer-config='transferConfig'></data-base-transfer>
         </div>
       </div>
     </div>
@@ -92,6 +30,9 @@
 </template>
 
 <script>
+import DataBaseCommand from '@/components/DataBaseCommand'
+import DataBaseTransfer from '@/components/DataBaseTransfer'
+
 export default {
   name: 'HomePage',
   data () {
@@ -105,28 +46,19 @@ export default {
     }
   },
   computed: {
-    createDatabase () {
-      /* #TODO. refacto || in computed */
-      return `CREATE DATABASE \`${this.dataBaseValue}\` COLLATE = '${this.collateValue}';`
+    baseConfig () {
+      return {
+        databaseName: this.dataBaseValue,
+        host: this.hostValue,
+        password: this.passwordValue,
+        user: this.userValue
+      }
     },
-    createUser () {
-      /* #TODO. refacto || in computed */
-      return `CREATE USER \`${this.userValue}' IDENTIFIED BY '${this.passwordValue}';`
+    dataBaseConfig () {
+      return Object.assign({}, this.baseConfig, { collate: this.collateValue })
     },
-    grantUser () {
-      /* #TODO. refacto || in computed */
-      return `GRANT ALL PRIVILEGES ON \`${this.dataBaseValue}\`.* TO \`${this.userValue}\`@'${this.hostValue}';`
-    },
-    flushPrivileges () {
-      return 'FLUSH PRIVILEGES;'
-    },
-    importDatabase () {
-      /* #TODO. refacto || in computed */
-      return `mysql -h ${this.hostValue} -u${this.userValue} -p'${this.passwordValue}' ${this.dataBaseValue} < ${this.sqlFileValue}`
-    },
-    exportDatabase () {
-      /* #TODO. refacto || in computed */
-      return `mysqldump -h ${this.hostValue} -u${this.userValue} -p'${this.passwordValue}' -r${this.sqlFileValue} ${this.dataBaseValue}`
+    transferConfig () {
+      return Object.assign({}, this.baseConfig, { sqlFile: this.sqlFileValue })
     },
     dataBaseValue () {
       return this.databaseName || '[DATA_BASE]'
@@ -141,11 +73,15 @@ export default {
       return this.host || '[HOST]'
     },
     collateValue () {
-      return this.host || '[COLLATE]'
+      return this.collate || '[COLLATE]'
     },
     sqlFileValue () {
       return this.sqlFile || '[SQL_FILE]'
     }
+  },
+  components: {
+    DataBaseCommand,
+    DataBaseTransfer
   }
 }
 </script>
